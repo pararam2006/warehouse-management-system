@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Склад — Операции</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f4f5f7; }
+        header {
+            background: #111827;
+            color: #f9fafb;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { margin: 0; font-size: 18px; }
+        nav {
+            background: #1f2937;
+            padding: 8px 20px;
+            display: flex;
+            gap: 12px;
+        }
+        nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        nav a:hover { background: #374151; color: #f9fafb; }
+        main { padding: 20px; display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+            flex: 1 1 260px;
+            min-width: 260px;
+        }
+        h2 { margin-top: 0; font-size: 16px; }
+        label { font-size: 12px; color: #374151; display: block; margin-bottom: 2px; }
+        input {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        button {
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        button:hover { background: #1d4ed8; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        th { background: #f9fafb; }
+        .message { font-size: 13px; margin-top: 4px; color: #b91c1c; }
+        .success { font-size: 13px; margin-top: 4px; color: #166534; }
+        .quick-create {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .quick-create h3 {
+            margin: 0 0 8px;
+            font-size: 13px;
+            color: #374151;
+        }
+        .quick-create form {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+        .quick-create form > div {
+            flex: 1;
+        }
+        .quick-create button {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Складские операции</h1>
+    <a href="/dashboard" style="color:#e5e7eb;font-size:13px;text-decoration:none;">← Дашборд</a>
+</header>
+<nav>
+    <a href="/dashboard">Дашборд</a>
+    <a href="/products">Товары</a>
+    <a href="/warehouse">Складские операции</a>
+    <a href="/orders">Заказы</a>
+</nav>
+<main>
+    <section class="card">
+        <h2>Приёмка товара</h2>
+        <form id="receiptForm">
+            <label for="rcProductId">ID товара</label>
+            <input id="rcProductId" required>
+            <label for="rcSupplierId">ID поставщика</label>
+            <input id="rcSupplierId">
+            <label for="rcQuantity">Количество</label>
+            <input id="rcQuantity" type="number" min="0" step="0.01" required>
+            <label for="rcPrice">Цена закупки</label>
+            <input id="rcPrice" type="number" min="0" step="0.01">
+            <label for="rcExpiry">Срок годности (RFC3339)</label>
+            <input id="rcExpiry" placeholder="2025-12-31T00:00:00Z">
+            <button type="submit">Принять</button>
+        </form>
+        <div class="message" id="receiptMsg"></div>
+    </section>
+
+    <section class="card">
+        <h2>Списание</h2>
+        <form id="writeOffForm">
+            <label for="woProductId">ID товара</label>
+            <input id="woProductId" required>
+            <label for="woQuantity">Количество</label>
+            <input id="woQuantity" type="number" min="0" step="0.01" required>
+            <button type="submit">Списать</button>
+        </form>
+        <div class="message" id="writeOffMsg"></div>
+    </section>
+
+    <section class="card">
+        <h2>Резервирование</h2>
+        <form id="reserveForm">
+            <label for="rsProductId">ID товара</label>
+            <input id="rsProductId" required>
+            <label for="rsOrderId">ID заказа</label>
+            <input id="rsOrderId" required>
+            <label for="rsQuantity">Количество</label>
+            <input id="rsQuantity" type="number" min="0" step="0.01" required>
+            <button type="submit">Зарезервировать</button>
+        </form>
+        <div class="message" id="reserveMsg"></div>
+    </section>
+
+    <section class="card" style="flex: 1 1 100%; max-width: 520px;">
+        <h2>Остатки</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Товар ID</th>
+                <th>Количество</th>
+            </tr>
+            </thead>
+            <tbody id="inventoryBody"></tbody>
+        </table>
+        <button id="refreshInventory" style="margin-top:8px;">Обновить остатки</button>
+        <div class="message" id="inventoryMsg"></div>
+    </section>
+
+    <section class="card">
+        <h2>Быстрое создание категории</h2>
+        <form id="quickCategoryForm">
+            <label for="quickCategoryName">Название категории</label>
+            <input id="quickCategoryName" placeholder="Новая категория" required>
+            <button type="submit">Создать категорию</button>
+        </form>
+        <div class="message" id="categoryMsg"></div>
+    </section>
+
+    <section class="card">
+        <h2>Быстрое создание поставщика</h2>
+        <form id="quickSupplierForm">
+            <label for="quickSupplierName">Название</label>
+            <input id="quickSupplierName" placeholder="Название поставщика" required>
+            <label for="quickSupplierAddress">Адрес</label>
+            <input id="quickSupplierAddress" placeholder="Адрес">
+            <label for="quickSupplierPhone">Телефон</label>
+            <input id="quickSupplierPhone" placeholder="Телефон">
+            <label for="quickSupplierEmail">E-mail</label>
+            <input id="quickSupplierEmail" type="email" placeholder="email@example.com">
+            <button type="submit">Создать поставщика</button>
+        </form>
+        <div class="message" id="supplierMsg"></div>
+    </section>
+</main>
+
+<script src="/src/warehouse.js"></script>
+</body>
+</html>
+
+
+

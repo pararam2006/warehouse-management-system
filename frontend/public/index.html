@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Склад — Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f4f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+            padding: 32px 28px;
+            width: 100%;
+            max-width: 380px;
+        }
+        h1 {
+            margin: 0 0 4px;
+            font-size: 24px;
+        }
+        p.subtitle {
+            margin: 0 0 24px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #374151;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        input:focus, select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+        }
+        .field {
+            margin-bottom: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: none;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease, transform 0.05s ease;
+        }
+        button:hover { background: #1d4ed8; }
+        button:active { transform: translateY(1px); }
+        button:disabled {
+            background: #9ca3af;
+            cursor: default;
+        }
+        .error {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #b91c1c;
+        }
+        .success {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #166534;
+        }
+        .hint {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Складской учет</h1>
+    <p class="subtitle">Войдите в систему</p>
+
+    <form id="loginForm">
+        <div class="field">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" required autocomplete="username" />
+        </div>
+        <div class="field">
+            <label for="password">Пароль</label>
+            <input id="password" name="password" type="password" required minlength="6" autocomplete="current-password" />
+        </div>
+
+        <button type="submit" id="submitBtn">Войти</button>
+
+        <div id="message" class=""></div>
+        <p class="hint">
+            После успешного входа вы будете перенаправлены на дашборд.
+        </p>
+        <p class="hint">
+            Ещё нет аккаунта? <a href="/register">Зарегистрироваться</a>
+        </p>
+    </form>
+</div>
+
+<script src="/src/login.js"></script>
+
+</body>
+</html>
+
+

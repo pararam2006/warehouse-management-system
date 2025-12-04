@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Склад — Заказы</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f4f5f7; }
+        header {
+            background: #111827;
+            color: #f9fafb;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { margin: 0; font-size: 18px; }
+        nav {
+            background: #1f2937;
+            padding: 8px 20px;
+            display: flex;
+            gap: 12px;
+        }
+        nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        nav a:hover { background: #374151; color: #f9fafb; }
+        main { padding: 20px; display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+            flex: 1 1 320px;
+            min-width: 320px;
+        }
+        h2 { margin-top: 0; font-size: 16px; }
+        label { font-size: 12px; color: #374151; display: block; margin-bottom: 2px; }
+        input {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        button {
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        button:hover { background: #1d4ed8; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        th { background: #f9fafb; }
+        .message { font-size: 13px; margin-top: 4px; color: #b91c1c; }
+        textarea {
+            width: 100%;
+            min-height: 60px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Заказы</h1>
+    <a href="/dashboard" style="color:#e5e7eb;font-size:13px;text-decoration:none;">← Дашборд</a>
+</header>
+<nav>
+    <a href="/dashboard">Дашборд</a>
+    <a href="/products">Товары</a>
+    <a href="/warehouse">Складские операции</a>
+    <a href="/orders">Заказы</a>
+</nav>
+<main>
+    <section class="card">
+        <h2>Список заказов</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Клиент</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+        </table>
+        <div class="message" id="ordersMsg"></div>
+    </section>
+
+    <section class="card">
+        <h2>Создать заказ</h2>
+        <form id="orderForm">
+            <label for="customer">Клиент</label>
+            <input id="customer" required>
+            <label for="itemsJson">Позиции (JSON-массив)</label>
+            <textarea id="itemsJson" placeholder='[
+  {"product_id":"p-1","quantity":1,"price":100}
+]'></textarea>
+            <button type="submit">Создать заказ</button>
+        </form>
+        <div class="message" id="orderFormMsg"></div>
+    </section>
+
+    <section class="card" style="max-width:260px;">
+        <h2>Обновить статус</h2>
+        <form id="statusForm">
+            <label for="stOrderId">ID заказа</label>
+            <input id="stOrderId" required>
+            <label for="stStatus">Статус (new, reserved, completed, canceled)</label>
+            <input id="stStatus" required>
+            <button type="submit">Обновить</button>
+        </form>
+        <div class="message" id="statusMsg"></div>
+    </section>
+</main>
+
+<script src="/src/orders.js"></script>
+</body>
+</html>
+
+
+

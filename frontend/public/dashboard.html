@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Склад — Дашборд</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f4f5f7; }
+        header {
+            background: #111827;
+            color: #f9fafb;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { margin: 0; font-size: 18px; }
+        .user-info { font-size: 13px; opacity: .9; }
+        nav {
+            background: #1f2937;
+            padding: 8px 20px;
+            display: flex;
+            gap: 12px;
+        }
+        nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        nav a:hover { background: #374151; color: #f9fafb; }
+        main { padding: 20px; }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+            max-width: 720px;
+        }
+        h2 { margin-top: 0; font-size: 18px; }
+        .metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+        .metric {
+            flex: 1 1 140px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+        .metric span.label { display: block; font-size: 12px; color: #6b7280; }
+        .metric span.value { display: block; font-size: 18px; font-weight: 600; margin-top: 2px; }
+        .message { margin-top: 10px; font-size: 13px; color: #b91c1c; }
+        button.logout {
+            background: transparent;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: #e5e7eb;
+            cursor: pointer;
+        }
+        button.logout:hover { background: #374151; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Складской учет — Дашборд</h1>
+    <div class="user-info" id="userInfo"></div>
+    <button class="logout" id="logoutBtn">Выйти</button>
+</header>
+<nav>
+    <a href="/dashboard">Дашборд</a>
+    <a href="/products">Товары</a>
+    <a href="/warehouse">Складские операции</a>
+    <a href="/orders">Заказы</a>
+</nav>
+<main>
+    <section class="card">
+        <h2>Сводка</h2>
+        <div class="metrics">
+            <div class="metric">
+                <span class="label">Товаров</span>
+                <span class="value" id="metricProducts">—</span>
+            </div>
+            <div class="metric">
+                <span class="label">Категорий</span>
+                <span class="value" id="metricCategories">—</span>
+            </div>
+            <div class="metric">
+                <span class="label">Поставщиков</span>
+                <span class="value" id="metricSuppliers">—</span>
+            </div>
+            <div class="metric">
+                <span class="label">Заказов</span>
+                <span class="value" id="metricOrders">—</span>
+            </div>
+        </div>
+        <div class="message" id="message"></div>
+    </section>
+</main>
+
+<script src="/src/dashboard.js"></script>
+</body>
+</html>
+
+
+
