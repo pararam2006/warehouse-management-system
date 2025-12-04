@@ -1,3 +1,5 @@
+import {fetchWithAuth} from "./utils.js";
+
 (function () {
     const API_BASE_URL = 'http://localhost:8080/api';
     const token = localStorage.getItem('wms_token');
@@ -30,14 +32,18 @@
             price: parseFloat(document.getElementById('rcPrice').value) || 0,
             expiry_date: document.getElementById('rcExpiry').value.trim()
         };
-        fetch(API_BASE_URL + '/warehouse/receipt', {
+        fetchWithAuth(API_BASE_URL + '/warehouse/receipt', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(dto)
-        }).then(r => {
-            if (!r.ok) return r.json().then(d => { throw new Error(d && d.error || 'Ошибка приёмки'); });
+        }).then(res => {
+            if (!res || !res.ok) {
+                setMsg(receiptMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка приёмки');
+                return;
+            }
             receiptForm.reset();
-        }).catch(err => setMsg(receiptMsg, err.message));
+            setMsg(receiptMsg, 'Товар успешно принят', true);
+        }).catch(err => setMsg(receiptMsg, err.message || 'Не удалось принять товар'));
     });
 
     const writeOffForm = document.getElementById('writeOffForm');
@@ -49,14 +55,18 @@
             product_id: document.getElementById('woProductId').value.trim(),
             quantity: parseFloat(document.getElementById('woQuantity').value)
         };
-        fetch(API_BASE_URL + '/warehouse/write-off', {
+        fetchWithAuth(API_BASE_URL + '/warehouse/write-off', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(dto)
-        }).then(r => {
-            if (!r.ok) return r.json().then(d => { throw new Error(d && d.error || 'Ошибка списания'); });
+        }).then(res => {
+            if (!res || !res.ok) {
+                setMsg(writeOffMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка списания');
+                return;
+            }
             writeOffForm.reset();
-        }).catch(err => setMsg(writeOffMsg, err.message));
+            setMsg(writeOffMsg, 'Товар успешно списан', true);
+        }).catch(err => setMsg(writeOffMsg, err.message || 'Не удалось списать товар'));
     });
 
     const reserveForm = document.getElementById('reserveForm');
@@ -69,29 +79,32 @@
             order_id: document.getElementById('rsOrderId').value.trim(),
             quantity: parseFloat(document.getElementById('rsQuantity').value)
         };
-        fetch(API_BASE_URL + '/warehouse/reserve', {
+        fetchWithAuth(API_BASE_URL + '/warehouse/reserve', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(dto)
-        }).then(r => {
-            if (!r.ok) return r.json().then(d => { throw new Error(d && d.error || 'Ошибка резервирования'); });
+        }).then(res => {
+            if (!res || !res.ok) {
+                setMsg(reserveMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка резервирования');
+                return;
+            }
             reserveForm.reset();
-        }).catch(err => setMsg(reserveMsg, err.message));
+            setMsg(reserveMsg, 'Товар успешно зарезервирован', true);
+        }).catch(err => setMsg(reserveMsg, err.message || 'Не удалось зарезервировать товар'));
     });
 
     const inventoryBody = document.getElementById('inventoryBody');
     const inventoryMsg = document.getElementById('inventoryMsg');
     function loadInventory() {
         setMsg(inventoryMsg, '');
-        fetch(API_BASE_URL + '/warehouse/inventory', { headers: { 'Authorization': 'Bearer ' + token } })
-            .then(r => r.json().then(data => ({ ok: r.ok, data })))
-            .then(({ ok, data }) => {
-                if (!ok) {
-                    setMsg(inventoryMsg, data && data.error ? data.error : 'Ошибка загрузки остатков');
+        fetchWithAuth(API_BASE_URL + '/warehouse/inventory')
+            .then(res => {
+                if (!res || !res.ok) {
+                    setMsg(inventoryMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка загрузки остатков');
                     return;
                 }
                 inventoryBody.innerHTML = '';
-                (data || []).forEach(it => {
+                (res.data || []).forEach(it => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td>${it.product_id}</td><td>${it.quantity}</td>`;
                     inventoryBody.appendChild(tr);
@@ -113,19 +126,18 @@
             setMsg(categoryMsg, 'Введите название категории');
             return;
         }
-        fetch(API_BASE_URL + '/categories', {
+        fetchWithAuth(API_BASE_URL + '/categories', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ name, parent_id: '' })
         })
-            .then(r => r.json().then(data => ({ ok: r.ok, data })))
-            .then(({ ok, data }) => {
-                if (!ok) {
-                    setMsg(categoryMsg, data && data.error ? data.error : 'Ошибка создания категории');
+            .then(res => {
+                if (!res || !res.ok) {
+                    setMsg(categoryMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка создания категории');
                     return;
                 }
                 document.getElementById('quickCategoryName').value = '';
-                setMsg(categoryMsg, 'Категория "' + (data.name || name) + '" успешно создана (ID: ' + (data.id || '') + ')', true);
+                setMsg(categoryMsg, 'Категория "' + (res.data.name || name) + '" успешно создана (ID: ' + (res.data.id || '') + ')', true);
             })
             .catch(() => setMsg(categoryMsg, 'Не удалось создать категорию'));
     });
@@ -147,19 +159,18 @@
             phone: document.getElementById('quickSupplierPhone').value.trim(),
             email: document.getElementById('quickSupplierEmail').value.trim()
         };
-        fetch(API_BASE_URL + '/suppliers', {
+        fetchWithAuth(API_BASE_URL + '/suppliers', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(dto)
         })
-            .then(r => r.json().then(data => ({ ok: r.ok, data })))
-            .then(({ ok, data }) => {
-                if (!ok) {
-                    setMsg(supplierMsg, data && data.error ? data.error : 'Ошибка создания поставщика');
+            .then(res => {
+                if (!res || !res.ok) {
+                    setMsg(supplierMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка создания поставщика');
                     return;
                 }
                 quickSupplierForm.reset();
-                setMsg(supplierMsg, 'Поставщик "' + (data.name || name) + '" успешно создан (ID: ' + (data.id || '') + ')', true);
+                setMsg(supplierMsg, 'Поставщик "' + (res.data.name || name) + '" успешно создан (ID: ' + (res.data.id || '') + ')', true);
             })
             .catch(() => setMsg(supplierMsg, 'Не удалось создать поставщика'));
     });

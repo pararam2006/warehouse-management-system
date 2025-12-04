@@ -1,3 +1,5 @@
+import {fetchWithAuth} from "./utils.js";
+
 (function () {
     const API_BASE_URL = 'http://localhost:8080/api';
     const token = localStorage.getItem('wms_token');
@@ -15,15 +17,14 @@
 
     function loadOrders() {
         setMsg(ordersMsg, '');
-        fetch(API_BASE_URL + '/orders', { headers: { 'Authorization': 'Bearer ' + token } })
-            .then(r => r.json().then(data => ({ ok: r.ok, data })))
-            .then(({ ok, data }) => {
-                if (!ok) {
-                    setMsg(ordersMsg, data && data.error ? data.error : 'Ошибка загрузки заказов');
+        fetchWithAuth(API_BASE_URL + '/orders')
+            .then(res => {
+                if (!res || !res.ok) {
+                    setMsg(ordersMsg, res && res.data && res.data.error ? res.data.error : 'Ошибка загрузки заказов');
                     return;
                 }
                 ordersBody.innerHTML = '';
-                (data || []).forEach(o => {
+                (res.data || []).forEach(o => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${o.id}</td>

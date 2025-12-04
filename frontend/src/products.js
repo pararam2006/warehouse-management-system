@@ -1,3 +1,5 @@
+import {fetchWithAuth} from "./utils.js";
+
 (function () {
     const API_BASE_URL = 'http://localhost:8080/api';
     const token = localStorage.getItem('wms_token');
@@ -19,9 +21,6 @@
     const supplierInput = document.getElementById('supplierId');
     const unitInput = document.getElementById('unit');
 
-    let categories = [];
-    let suppliers = [];
-
     document.getElementById('resetBtn').addEventListener('click', () => {
         idInput.value = '';
         form.reset();
@@ -32,37 +31,53 @@
     });
 
     function loadCategories() {
-        fetch(API_BASE_URL + '/categories', { headers: authHeaders() })
-            .then(r => r.json().then(data => ({ ok: r.ok, data })))
-            .then(({ ok, data }) => {
-                if (!ok) return;
-                categories = data || [];
+        console.log("[loadCategories] Старт");
+        fetchWithAuth(API_BASE_URL + "/categories")
+            .then(res => {
+                console.log("[loadCategories] Результат:", res);
+
+                if (!res || !res.ok) {
+                    console.warn("[loadCategories] Ошибка:", res?.data);
+                    return;
+                }
+
+                const data = res.data;
+                console.log("[loadCategories] Данные категорий:", data);
+
                 categoryInput.innerHTML = '<option value="">— Не выбрано —</option>';
-                categories.forEach(c => {
+
+                data.forEach(c => {
                     const opt = document.createElement('option');
                     opt.value = c.id;
                     opt.textContent = c.name;
                     categoryInput.appendChild(opt);
                 });
-            })
-            .catch(() => {});
+            });
     }
 
     function loadSuppliers() {
-        fetch(API_BASE_URL + '/suppliers', { headers: authHeaders() })
-            .then(r => r.json().then(data => ({ ok: r.ok, data })))
-            .then(({ ok, data }) => {
-                if (!ok) return;
-                suppliers = data || [];
+        console.log("[loadSuppliers] Старт");
+        fetchWithAuth(API_BASE_URL + "/suppliers")
+            .then(res => {
+                console.log("[loadSuppliers] Результат:", res);
+
+                if (!res || !res.ok) {
+                    console.warn("[loadSuppliers] Ошибка:", res?.data);
+                    return;
+                }
+
+                const data = res.data;
+                console.log("[loadSuppliers] Данные поставщиков:", data);
+
                 supplierInput.innerHTML = '<option value="">— Не выбрано —</option>';
-                suppliers.forEach(s => {
+
+                data.forEach(s => {
                     const opt = document.createElement('option');
                     opt.value = s.id;
                     opt.textContent = s.name;
                     supplierInput.appendChild(opt);
                 });
-            })
-            .catch(() => {});
+            });
     }
 
     function setMessage(el, msg) {
